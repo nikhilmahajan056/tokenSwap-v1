@@ -9,7 +9,7 @@ The example shows how to connect Metamask; and to get the user wallet info and s
 Clone the repository and execute below commands in the sequential manner: 
 
 ```bash
-cd tokenSwap
+cd tokenSwap-v1
 
 npm install
 # or
