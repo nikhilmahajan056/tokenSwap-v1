@@ -112,63 +112,15 @@ export default function Home() {
     }
   };
 
-  const revertTransaction = async () => {
-    try {
-      var body = {
-        input_token: selectOutput,
-        output_token: selectInput,
-        amount: amount,
-        account_address: accountAddress,
-        type: "buy",
-      };
-      const res = await fetch('/api/transfer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      if (res.status === 200) {
-        const res_json = await res.json();
-        selectInput === 'ETH' ? setScndTrxSucMsg("Error occured while submitting your request. Transaction reverted successfully. For more details, please check " + process.env.NEXT_PUBLIC_ETHERSCAN_LINK +"/tx/" + res_json.hash) 
-        : setScndTrxSucMsg("Error occured while submitting your request. Transaction reverted successfully. For more details, please check " + process.env.NEXT_PUBLIC_AVAX_LINK +"/tx/" + res_json.hash);
-        getBalance(accountAddress);
-      } else {
-        throw new Error(await res.text())
-      }
-    } catch (error) {
-      console.error(error);
-      setError('An unexpected error occurred:'+error.message);
-    }
-  };
-
   const submitTransaction = async (transaction) => {
     try {
       const web3 = new Web3(window.ethereum);
       const resp = await web3.eth.sendTransaction(transaction);
 
       if (resp.status) {
-        // var body = {
-        //   input_token: selectInput,
-        //   output_token: selectOutput,
-        //   amount: amount,
-        //   account_address: accountAddress,
-        //   type: "buy",
-        // };
-        // const res = await fetch('/api/transfer', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(body),
-        // })
-        // if (res.status === 200) {
-        //   const res_json = await res.json();
           selectInput === 'ETH' ? setFstTrxSucMsg("Transaction submitted successfully. For more details, please check " + process.env.NEXT_PUBLIC_ETHERSCAN_LINK +"/tx/" + resp.transactionHash) 
           : setFstTrxSucMsg("Transaction submitted successfully. For more details, please check " + process.env.NEXT_PUBLIC_AVAX_LINK +"/tx/" + resp.transactionHash);
-        //   selectOutput === 'ETH' ? setScndTrxSucMsg("Transaction submitted successfully. For more details, please check " + process.env.NEXT_PUBLIC_ETHERSCAN_LINK +"/tx/" + res_json.hash) 
-        //   : setScndTrxSucMsg("Transaction submitted successfully. For more details, please check " + process.env.NEXT_PUBLIC_AVAX_LINK +"/tx/" + res_json.hash);
           getBalance(accountAddress);
-        // } else {
-        //   revertTransaction();
-        //   throw new Error(await res.text())
-        // }
       } else {
         throw new Error(await resp.json())
       }
@@ -193,7 +145,6 @@ export default function Home() {
       type: "sell",
     }
 
-    // const network = selectInput === 'ETH' ? process.env.ETH_NETWORK : process.env.AVX_NETWORK;
     try {
       const res = await fetch('/api/transfer', {
         method: 'POST',
@@ -226,7 +177,6 @@ export default function Home() {
 
         <p className={styles.description}>
           RMDSTT is a multichain token. You can convert Ethereum RMDSTT with the Avalanche or vice versa. 
-          {/* <code className={styles.code}>pages/index.js</code> */}
         </p>
 
         <div className={styles.grid}>
@@ -240,10 +190,13 @@ export default function Home() {
                 accountAddress === "" ? <button className="connect" onClick={connectWallet}>Connect to Metamask!</button>
                 : (
                   <div>
-                    {/* <div className="balance">Ethereum Account Balance: {(walletBalance.ethAccountBalance/10**18).toFixed(4)} ETH</div>
-                    <div className="balance">RMDSET Token Balance: {(walletBalance.ethTokenBalance/10**18).toFixed(4)} RMDSET</div>
-                    <div className="balance">Avalanche Account Balance: {(walletBalance.avxAccountBalance/10**18).toFixed(4)} AVX</div>
-                    <div className="balance">RMDSAT Token Balance: {(walletBalance.avxTokenBalance/10**18).toFixed(4)} RMDSAT</div> */}
+                    <table>
+                        <tr>
+                            <td className="heading">Connected:</td>
+                            <td className="heading">{accountAddress}</td>
+                        </tr>
+                    </table>
+                    <br />
                     <table>
                         <tr>
                             <td className="heading">Ethereum Account Balance</td>
@@ -267,8 +220,6 @@ export default function Home() {
                         </tr>
                     </table>
                     <br />
-                    {/* <h3>Select a chain &darr;</h3> */}
-                    {/* <select name="input_token" defaultValue={selectInput} onChange={(e) => setSelectInput(e.target.value)} disabled> */}
                     <select name="input_token" value={selectInput} disabled>
                         <option value="ETH">Ethereum</option>
                         <option value="AVAX">Avalanche</option>
